@@ -64,7 +64,8 @@ namespace NzbDrone.Core.Indexers.Nyaa
 
             foreach (var searchTitle in searchCriteria.SceneTitles.Select(PrepareQuery))
             {
-                if (searchCriteria.AbsoluteEpisodeNumber > 0)
+                // if (searchCriteria.AbsoluteEpisodeNumber > 0)
+                if (searchCriteria.AbsoluteEpisodeNumber == 1) // Hack to reduce number of searches for instructional purposes.  Original code shown above
                 {
                     pageableRequests.Add(GetPagedRequests($"{searchTitle}+{searchCriteria.AbsoluteEpisodeNumber:0}"));
 
@@ -74,7 +75,8 @@ namespace NzbDrone.Core.Indexers.Nyaa
                     }
                 }
 
-                if (Settings.AnimeStandardFormatSearch && searchCriteria.SeasonNumber > 0 && searchCriteria.EpisodeNumber > 0)
+                // if (Settings.AnimeStandardFormatSearch && searchCriteria.SeasonNumber > 0 && searchCriteria.EpisodeNumber > 0)
+                if (Settings.AnimeStandardFormatSearch && searchCriteria.SeasonNumber > 0 && searchCriteria.EpisodeNumber == 1) // Hack to reduce number of searches for instructional purposes.  Original code shown above
                 {
                     pageableRequests.Add(GetPagedRequests($"{searchTitle}+s{searchCriteria.SeasonNumber:00}e{searchCriteria.EpisodeNumber:00}"));
                 }
