@@ -67,6 +67,7 @@ namespace NzbDrone.Core.DecisionEngine
             }
 
             var reportNumber = 1;
+            var seasonPackCount = 0;
 
             foreach (var report in reports)
             {
@@ -77,6 +78,11 @@ namespace NzbDrone.Core.DecisionEngine
                 try
                 {
                     var parsedEpisodeInfo = Parser.Parser.ParseTitle(report.Title);
+
+                    if (parsedEpisodeInfo != null && parsedEpisodeInfo.FullSeason)
+                    {
+                        seasonPackCount++;
+                    }
 
                     if (parsedEpisodeInfo == null || parsedEpisodeInfo.IsPossibleSpecialEpisode)
                     {
@@ -188,6 +194,15 @@ namespace NzbDrone.Core.DecisionEngine
 
                     yield return decision;
                 }
+            }
+
+            if (reports.Any())
+            {
+                _logger.ProgressInfo("Found Seasoon Packs: {0} ****************************", seasonPackCount);
+            }
+            else
+            {
+                _logger.ProgressInfo("No Season Packs found *****************************");
             }
         }
 
