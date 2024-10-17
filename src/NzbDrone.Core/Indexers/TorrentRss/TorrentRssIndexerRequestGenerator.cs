@@ -43,11 +43,6 @@ namespace NzbDrone.Core.Indexers.TorrentRss
             return new IndexerPageableRequestChain();
         }
 
-        public virtual IndexerPageableRequestChain GetSearchRequests(AnimeSeasonSearchCriteria searchCriteria)
-        {
-            return new IndexerPageableRequestChain();
-        }
-
         public virtual IndexerPageableRequestChain GetSearchRequests(SpecialEpisodeSearchCriteria searchCriteria)
         {
             return new IndexerPageableRequestChain();

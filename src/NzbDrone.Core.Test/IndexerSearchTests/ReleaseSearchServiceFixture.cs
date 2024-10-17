@@ -129,10 +129,6 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
                 .Callback<AnimeEpisodeSearchCriteria>(s => result.Add(s))
                 .Returns(Task.FromResult<IList<Parser.Model.ReleaseInfo>>(new List<Parser.Model.ReleaseInfo>()));
 
-            _mockIndexer.Setup(v => v.Fetch(It.IsAny<AnimeSeasonSearchCriteria>()))
-                .Callback<AnimeSeasonSearchCriteria>(s => result.Add(s))
-                .Returns(Task.FromResult<IList<Parser.Model.ReleaseInfo>>(new List<Parser.Model.ReleaseInfo>()));
-
             _mockIndexer.Setup(v => v.Fetch(It.IsAny<SpecialEpisodeSearchCriteria>()))
                 .Callback<SpecialEpisodeSearchCriteria>(s => result.Add(s))
                 .Returns(Task.FromResult<IList<Parser.Model.ReleaseInfo>>(new List<Parser.Model.ReleaseInfo>()));
@@ -417,77 +413,6 @@ namespace NzbDrone.Core.Test.IndexerSearchTests
 
             criteria.Count.Should().Be(_xemEpisodes.Count(e => e.SeasonNumber == seasonNumber));
             criteria.ForEach(c => c.IsSeasonSearch.Should().BeTrue());
-        }
-
-        [Test]
-        public async Task season_search_for_anime_should_search_for_each_monitored_season()
-        {
-            WithEpisodes();
-            _xemSeries.SeriesType = SeriesTypes.Anime;
-            _xemEpisodes.ForEach(e => e.EpisodeFileId = 0);
-
-            var seasonNumber = 1;
-            var allCriteria = WatchForSearchCriteria();
-
-            await Subject.SeasonSearch(_xemSeries.Id, seasonNumber, true, false, true, false);
-
-            var criteria = allCriteria.OfType<AnimeSeasonSearchCriteria>().ToList();
-
-            var episodesForSeason1 = _xemEpisodes.Where(e => e.SeasonNumber == seasonNumber);
-            criteria.Count.Should().Be(episodesForSeason1.Select(e => e.SeasonNumber).Distinct().Count());
-        }
-
-        [Test]
-        public async Task season_search_for_anime_should_not_search_for_unmonitored_season()
-        {
-            WithEpisodes();
-            _xemSeries.SeriesType = SeriesTypes.Anime;
-            _xemEpisodes.ForEach(e => e.Monitored = false);
-            _xemEpisodes.ForEach(e => e.EpisodeFileId = 0);
-
-            var seasonNumber = 1;
-            var allCriteria = WatchForSearchCriteria();
-
-            await Subject.SeasonSearch(_xemSeries.Id, seasonNumber, false, true, true, false);
-
-            var criteria = allCriteria.OfType<AnimeSeasonSearchCriteria>().ToList();
-
-            criteria.Count.Should().Be(0);
-        }
-
-        [Test]
-        public async Task season_search_for_anime_should_not_search_for_unaired_season()
-        {
-            WithEpisodes();
-            _xemSeries.SeriesType = SeriesTypes.Anime;
-            _xemEpisodes.ForEach(e => e.AirDateUtc = DateTime.UtcNow.AddDays(5));
-            _xemEpisodes.ForEach(e => e.EpisodeFileId = 0);
-
-            var seasonNumber = 1;
-            var allCriteria = WatchForSearchCriteria();
-
-            await Subject.SeasonSearch(_xemSeries.Id, seasonNumber, false, false, true, false);
-
-            var criteria = allCriteria.OfType<AnimeSeasonSearchCriteria>().ToList();
-
-            criteria.Count.Should().Be(0);
-        }
-
-        [Test]
-        public async Task season_search_for_anime_should_not_search_for_season_with_files()
-        {
-            WithEpisodes();
-            _xemSeries.SeriesType = SeriesTypes.Anime;
-            _xemEpisodes.ForEach(e => e.EpisodeFileId = 1);
-
-            var seasonNumber = 1;
-            var allCriteria = WatchForSearchCriteria();
-
-            await Subject.SeasonSearch(_xemSeries.Id, seasonNumber, true, false, true, false);
-
-            var criteria = allCriteria.OfType<AnimeSeasonSearchCriteria>().ToList();
-
-            criteria.Count.Should().Be(0);
         }
 
         [Test]

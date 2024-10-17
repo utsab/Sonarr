@@ -83,21 +83,6 @@ namespace NzbDrone.Core.Indexers.Nyaa
             return pageableRequests;
         }
 
-        public virtual IndexerPageableRequestChain GetSearchRequests(AnimeSeasonSearchCriteria searchCriteria)
-        {
-            var pageableRequests = new IndexerPageableRequestChain();
-
-            foreach (var searchTitle in searchCriteria.SceneTitles.Select(PrepareQuery))
-            {
-                if (Settings.AnimeStandardFormatSearch && searchCriteria.SeasonNumber > 0)
-                {
-                    pageableRequests.Add(GetPagedRequests($"{searchTitle}+s{searchCriteria.SeasonNumber:00}"));
-                }
-            }
-
-            return pageableRequests;
-        }
-
         public virtual IndexerPageableRequestChain GetSearchRequests(SpecialEpisodeSearchCriteria searchCriteria)
         {
             var pageableRequests = new IndexerPageableRequestChain();
